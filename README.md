@@ -8,3 +8,9 @@ Fungsi handle_connection bertugas untuk memproses aliran TCP yang masuk. Berikut
 4. Fungsi ini mengumpulkan baris-baris tersebut ke dalam sebuah vektor, yang merepresentasikan permintaan HTTP.
 5. Terakhir, fungsi ini mencetak permintaan HTTP tersebut untuk diperiksa.
 Singkatnya, handle_connection membaca aliran TCP yang masuk baris demi baris sampai menemukan sebuah baris kosong yang menandakan akhir dari header permintaan HTTP. Kemudian, fungsi ini mencetak baris-baris yang telah dikumpulkan sebagai permintaan HTTP.
+
+
+Commit 2
+<p align="center">
+  <img src="resources\commit2.png" />
+</p>
