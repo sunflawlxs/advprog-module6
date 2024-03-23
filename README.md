@@ -114,3 +114,28 @@ Pada COMMIT 4:
 9. Akhirnya, respons dikirim kembali ke klien melalui aliran TCP.
 
 Hal ini memperluas kemampuan server untuk menangani permintaan khusus di mana server akan tidur sejenak sebelum memberikan respons jika permintaan adalah `GET /sleep HTTP/1.1`. Selain itu, server tetap melayani permintaan untuk `hello.html` atau memberikan tanggapan 404 jika sumber daya tidak ditemukan.
+
+commit 5
+Berikut adalah cara kerjanya:
+
+1. Inisialisasi ThreadPool (`ThreadPool::new`):
+   - Sebuah thread pool baru disiapkan dengan ukuran tertentu, yang menentukan jumlah thread pekerja.
+   - Ini mendirikan sebuah saluran (channel) (`mpsc::channel`) untuk komunikasi antara thread utama (yang mengirimkan pekerjaan) dan thread pekerja.
+   - Sebuah vektor dibuat untuk menyimpan thread pekerja.
+   - Untuk setiap thread pekerja, itu membuat struktur Worker baru, meneruskan ID dan salinan ujung penerima saluran.
+
+2. Pembuatan Worker (`Worker::new`):
+   - Setiap thread pekerja diinisialisasi dengan sebuah penutup yang berjalan dalam loop tak terbatas.
+   - Dalam loop, pekerja menunggu pekerjaan dikirim melalui saluran.
+   - Begitu pekerjaan diterima, pekerja mengeksekusinya.
+
+3. Pelaksanaan Pekerjaan (`ThreadPool::execute`):
+   - Untuk menjalankan sebuah pekerjaan, thread utama mengemas pekerjaan dalam sebuah kotak dan mengirimkannya melalui saluran ke salah satu thread pekerja.
+   - Thread pekerja yang ditunjuk kemudian mengeksekusi pekerjaan tersebut.
+
+4. Conccurency dan Komunikasi:
+   - `Arc<Mutex<mpsc::Receiver<Job>>>` dibagikan di antara semua thread pekerja, memungkinkan akses aman ke ujung penerima saluran.
+   - `Mutex` memastikan akses eksklusif untuk menerima pekerjaan oleh hanya satu thread pekerja pada satu waktu, mencegah perlombaan data.
+   - Saluran `mpsc` (multi-penghasil, tunggal-penerima) memungkinkan beberapa thread untuk secara bersamaan mengirimkan pekerjaan ke thread pekerja sambil menjamin bahwa setiap pekerjaan hanya diproses oleh satu pekerja.
+
+Secara esensial, thread pool mengawasi sejumlah tetap thread pekerja. Tugas-tugas diserahkan ke pool dan dieksekusi secara bersamaan oleh thread-thread pekerja ini, menyediakan mekanisme yang mudah untuk eksekusi tugas secara paralel.
