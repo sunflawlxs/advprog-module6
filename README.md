@@ -11,6 +11,13 @@ Singkatnya, handle_connection membaca aliran TCP yang masuk baris demi baris sam
 
 
 Commit 2
+Menambahkan kode tambahan dalam fungsi `handle_connection` memodifikasinya untuk mengirimkan balasan HTTP kembali ke klien. Berikut adalah penjelasan tentang apa yang dilakukan oleh kode baru tersebut:  
+1. Kode tersebut mendefinisikan status_line yang menunjukkan bahwa balasan HTTP adalah `200 OK`. Ini berarti permintaan berhasil.  
+2. Kode tersebut membaca isi dari sebuah file bernama `hello.html` menjadi sebuah string menggunakan `fs::read_to_string()`. Ini diasumsikan bahwa terdapat sebuah file bernama `hello.html` di dalam direktori yang sama dengan executable.  
+3. Kode tersebut menghitung panjang dari string konten.  
+4. Kode tersebut memformat balasan HTTP, termasuk baris status, panjang konten, dan isi dari file `hello.html`.  
+5. Kode tersebut menuliskan balasan kembali ke aliran TCP, mengirimkannya ke klien menggunakan `write_all()`.  
+Jadi, secara ringkas, fungsi `handle_connection` yang dimodifikasi membaca konten dari file `hello.html`, membuat sebuah balasan HTTP dengan status line `200 OK`, dan mengirimkannya kembali ke klien melalui aliran TCP.
 <p align="center">
   <img src="resources\commit2.png" />
 </p>
