@@ -21,3 +21,81 @@ Jadi, secara ringkas, fungsi `handle_connection` yang dimodifikasi membaca konte
 <p align="center">
   <img src="resources\commit2.png" />
 </p>
+
+commit 3
+1. Saya membuat file `404.html` seperti berikut. 
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hello!</title>
+  </head>
+  <body>
+    <h1>Oops!</h1>
+    <p>Sorry, I don't know what you're asking for.</p>
+    <p>Rust is running from Sheryl's machine.</p>
+  </body>
+</html>
+``` 
+2. Memodifikasi fungsi `handle_connection` seperti berikut. 
+```rust
+fn handle_connection(mut stream: TcpStream) {
+    let buf_reader = BufReader::new(&mut stream);
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
+
+    if request_line == "GET / HTTP/1.1" {
+        let status_line = "HTTP/1.1 200 OK";
+        let contents = fs::read_to_string("hello.html").unwrap();
+        let length = contents.len();
+
+        let response = format!(
+            "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+        );
+
+        stream.write_all(response.as_bytes()).unwrap();
+    } else {
+        let status_line = "HTTP/1.1 404 NOT FOUND";
+        let contents = fs::read_to_string("404.html").unwrap();
+        let length = contents.len();
+
+        let response = format!(
+            "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+        );
+
+        stream.write_all(response.as_bytes()).unwrap();
+    }
+}
+```
+3. melakukan refactor pada fungsi `handle_connection` seperti berikut.
+```rust
+fn handle_connection(mut stream: TcpStream) {
+    let buf_reader = BufReader::new(&mut stream);
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
+
+    let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+        ("HTTP/1.1 200 OK", "hello.html")
+    } else {
+        ("HTTP/1.1 404 NOT FOUND", "404.html")
+    };
+    let contents = fs::read_to_string(filename).unwrap();
+    let length = contents.len();
+
+    let response = format!(
+        "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+    );
+    stream.write_all(response.as_bytes()).unwrap();
+}
+```
+4. tampilan dari `404.html`
+<p align="center">
+  <img src="resources\commit3.png" />
+</p>
+
+Fungsi `handle_connection` yang dimodifikasi bertindak sebagai server HTTP sederhana. Ia mengambil baris permintaan dari klien dalam permintaan HTTP dan memeriksa apakah itu adalah permintaan `GET / HTTP/1.1`, yang menunjukkan permintaan untuk jalur root (/). Berdasarkan hal ini, fungsi memberikan respons dengan konten yang berbeda:
+
+1. Jika permintaan adalah untuk jalur root (GET / HTTP/1.1), fungsi akan merespons dengan status baris `HTTP/1.1 200 OK`. Kemudian, ia membaca konten dari file `hello.html`, menghitung panjangnya, membuat respons HTTP yang berisi konten tersebut, dan mengirimkannya kembali ke klien.
+
+2. Jika permintaan bukan untuk jalur root (menunjukkan bahwa sumber daya yang diminta tidak ditemukan), fungsi akan merespons dengan status baris `HTTP/1.1 404 NOT FOUND`. Setelah itu, ia membaca konten dari file `404.html`, menghitung panjangnya, membuat respons HTTP yang berisi konten tersebut, dan mengirimkannya kembali ke klien.
+
+Dengan demikian, fungsi `handle_connection` yang telah dimodifikasi memberikan respons dengan konten yang berbeda tergantung pada permintaan yang diterima. Jika permintaan adalah untuk jalur root, server akan memberikan respons dengan `hello.html`. Jika tidak, server akan memberikan respons dengan halaman `404.html` yang menunjukkan bahwa sumber daya yang diminta tidak ditemukan.
