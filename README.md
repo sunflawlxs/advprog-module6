@@ -99,3 +99,18 @@ Fungsi `handle_connection` yang dimodifikasi bertindak sebagai server HTTP seder
 2. Jika permintaan bukan untuk jalur root (menunjukkan bahwa sumber daya yang diminta tidak ditemukan), fungsi akan merespons dengan status baris `HTTP/1.1 404 NOT FOUND`. Setelah itu, ia membaca konten dari file `404.html`, menghitung panjangnya, membuat respons HTTP yang berisi konten tersebut, dan mengirimkannya kembali ke klien.
 
 Dengan demikian, fungsi `handle_connection` yang telah dimodifikasi memberikan respons dengan konten yang berbeda tergantung pada permintaan yang diterima. Jika permintaan adalah untuk jalur root, server akan memberikan respons dengan `hello.html`. Jika tidak, server akan memberikan respons dengan halaman `404.html` yang menunjukkan bahwa sumber daya yang diminta tidak ditemukan.
+
+commit 4
+Pada COMMIT 4:
+
+1. `handle_connection` masih mengambil baris permintaan dari klien seperti sebelumnya.
+2. Namun, kali ini menggunakan pemodelan pola untuk memeriksa berbagai jenis baris permintaan.
+3. Jika permintaan adalah `GET / HTTP/1.1`, server akan merespons dengan status `HTTP/1.1 200 OK` dan konten dari `hello.html`.
+4. Jika permintaan adalah `GET /sleep HTTP/1.1`, server akan tidur selama 10 detik sebelum memberikan respons dengan status `HTTP/1.1 200 OK` dan konten dari `hello.html`.
+5. Jika permintaan tidak cocok dengan pola yang ditentukan, server akan merespons dengan status `HTTP/1.1 404 NOT FOUND` dan konten dari `404.html`.
+6. Setelah menentukan respons yang sesuai, server membaca konten dari file yang dibutuhkan.
+7. Panjang konten dihitung.
+8. Respons HTTP dibangun dengan informasi yang diperlukan.
+9. Akhirnya, respons dikirim kembali ke klien melalui aliran TCP.
+
+Hal ini memperluas kemampuan server untuk menangani permintaan khusus di mana server akan tidur sejenak sebelum memberikan respons jika permintaan adalah `GET /sleep HTTP/1.1`. Selain itu, server tetap melayani permintaan untuk `hello.html` atau memberikan tanggapan 404 jika sumber daya tidak ditemukan.
