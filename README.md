@@ -101,7 +101,6 @@ Fungsi `handle_connection` yang dimodifikasi bertindak sebagai server HTTP seder
 Dengan demikian, fungsi `handle_connection` yang telah dimodifikasi memberikan respons dengan konten yang berbeda tergantung pada permintaan yang diterima. Jika permintaan adalah untuk jalur root, server akan memberikan respons dengan `hello.html`. Jika tidak, server akan memberikan respons dengan halaman `404.html` yang menunjukkan bahwa sumber daya yang diminta tidak ditemukan.
 
 commit 4
-Pada COMMIT 4:
 
 1. `handle_connection` masih mengambil baris permintaan dari klien seperti sebelumnya.
 2. Namun, kali ini menggunakan pemodelan pola untuk memeriksa berbagai jenis baris permintaan.
@@ -139,3 +138,6 @@ Berikut adalah cara kerjanya:
    - Saluran `mpsc` (multi-penghasil, tunggal-penerima) memungkinkan beberapa thread untuk secara bersamaan mengirimkan pekerjaan ke thread pekerja sambil menjamin bahwa setiap pekerjaan hanya diproses oleh satu pekerja.
 
 Secara esensial, thread pool mengawasi sejumlah tetap thread pekerja. Tugas-tugas diserahkan ke pool dan dieksekusi secara bersamaan oleh thread-thread pekerja ini, menyediakan mekanisme yang mudah untuk eksekusi tugas secara paralel.
+
+commit 6
+sumber yang diberikan menyarankan untuk menggunakan metode ```build``` daripada ```new``` saat menginisialisasi ```ThreadPool```. Alasannya adalah bahwa menggunakan ```new``` mungkin menyebabkan kesalahan jika jumlah thread yang diberikan terlalu kecil. Namun, argumen ini dianggap tidak tepat karena ekspektasi dari metode ```new``` adalah berhasil. Oleh karena itu, disarankan untuk mengganti penggunaan metode ```new``` dengan ```build```, yang mengembalikan ```Result```. Kemudian, nilai yang dikembalikan dapat di-unwrap untuk mendapatkan nilai dari hasil eksekusi saat dipanggil.
