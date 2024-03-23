@@ -115,6 +115,7 @@ commit 4
 Hal ini memperluas kemampuan server untuk menangani permintaan khusus di mana server akan tidur sejenak sebelum memberikan respons jika permintaan adalah `GET /sleep HTTP/1.1`. Selain itu, server tetap melayani permintaan untuk `hello.html` atau memberikan tanggapan 404 jika sumber daya tidak ditemukan.
 
 commit 5
+
 Berikut adalah cara kerjanya:
 
 1. Inisialisasi ThreadPool (`ThreadPool::new`):
@@ -140,4 +141,5 @@ Berikut adalah cara kerjanya:
 Secara esensial, thread pool mengawasi sejumlah tetap thread pekerja. Tugas-tugas diserahkan ke pool dan dieksekusi secara bersamaan oleh thread-thread pekerja ini, menyediakan mekanisme yang mudah untuk eksekusi tugas secara paralel.
 
 commit 6
+
 sumber yang diberikan menyarankan untuk menggunakan metode ```build``` daripada ```new``` saat menginisialisasi ```ThreadPool```. Alasannya adalah bahwa menggunakan ```new``` mungkin menyebabkan kesalahan jika jumlah thread yang diberikan terlalu kecil. Namun, argumen ini dianggap tidak tepat karena ekspektasi dari metode ```new``` adalah berhasil. Oleh karena itu, disarankan untuk mengganti penggunaan metode ```new``` dengan ```build```, yang mengembalikan ```Result```. Kemudian, nilai yang dikembalikan dapat di-unwrap untuk mendapatkan nilai dari hasil eksekusi saat dipanggil.
